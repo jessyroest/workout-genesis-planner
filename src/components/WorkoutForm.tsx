@@ -8,6 +8,7 @@ import { Dumbbell, Flame, User, Calendar, CheckSquare, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import MuscleVisualization from "./MuscleVisualization";
 
 interface WorkoutFormProps {
   onSubmit: (formData: FormData) => void;
@@ -199,15 +200,21 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
         {/* Priority Muscle Groups */}
         <div>
           <h3 className="text-2xl font-bold mb-3 uppercase text-white">PRIORITY MUSCLE GROUPS</h3>
+          
+          {/* 3D Muscle Visualization */}
+          <div className="mb-6">
+            <MuscleVisualization priorityMuscles={formData.priorityMuscles} />
+          </div>
+          
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {muscleOptions.map((muscle) => (
               <div 
                 key={muscle.value}
                 className={`flex items-center space-x-2 p-3 border-2 rounded-md cursor-pointer ${
                   formData.priorityMuscles.includes(muscle.value) 
-                    ? 'border-red-600 bg-red-900/30' 
+                    ? 'border-red-600 bg-red-900/30 shadow-[0_0_15px_rgba(239,68,68,0.7)]' 
                     : 'border-gray-700 hover:border-red-600/50 bg-gray-900'
-                }`}
+                } transition-all duration-200`}
                 onClick={() => togglePriorityMuscle(muscle.value)}
               >
                 <Checkbox 

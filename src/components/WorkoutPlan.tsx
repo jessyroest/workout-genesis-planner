@@ -16,17 +16,29 @@ import {
   CardFooter
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Flame, Dumbbell, Clock, RotateCcw, Volume2 } from "lucide-react";
+import { Calendar, Flame, Dumbbell, Clock, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { makeWorkoutMoreIntense } from "@/utils/workoutGenerator";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutPlanProps {
   workoutPlan: WorkoutPlanType;
   onReset: () => void;
 }
 
+// Bodybuilder icons based on muscle group focus
+const bodybuilderIcons = {
+  chest: "/images/kevin-levrone.jpg",
+  back: "/images/ronnie-coleman.jpg", 
+  shoulders: "/images/kevin-levrone.jpg",
+  arms: "/images/lee-priest.jpg",
+  legs: "/images/ronnie-coleman.jpg",
+  core: "/images/lee-priest.jpg",
+  default: "/images/ronnie-coleman.jpg"
+};
+
 const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPlan, onReset }) => {
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlanType>(initialWorkoutPlan);
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(true);
   const { toast } = useToast();
 
   // Helper to format the muscle group focus
@@ -70,15 +82,42 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPl
       variant: "destructive"
     });
     
-    // Play audio
-    const audio = new Audio("/audio/you-gotta-lift-heavy-bro.mp3");
-    audio.play();
+    // Play audio if enabled
+    if (audioEnabled) {
+      const audio = new Audio("/audio/you-gotta-lift-heavy-bro.mp3");
+      audio.play();
+    }
+  };
+
+  // Toggle audio
+  const toggleAudio = () => {
+    setAudioEnabled(prev => !prev);
+    toast({
+      title: audioEnabled ? "AUDIO MUTED" : "AUDIO ENABLED",
+      description: audioEnabled ? "Silence mode activated." : "BEAST MODE SOUNDS ACTIVATED!",
+    });
   };
 
   // Play audio clips
   const playAudio = (clip: string) => {
-    const audio = new Audio(clip);
-    audio.play();
+    if (audioEnabled) {
+      const audio = new Audio(clip);
+      audio.play();
+    }
+  };
+
+  // Helper to get bodybuilder icon based on focus
+  const getBodybuilderIcon = (focus: string | string[]) => {
+    if (typeof focus === 'string') {
+      return bodybuilderIcons[focus as keyof typeof bodybuilderIcons] || bodybuilderIcons.default;
+    }
+    
+    // If it's an array, use the first focus
+    if (Array.isArray(focus) && focus.length > 0) {
+      return bodybuilderIcons[focus[0] as keyof typeof bodybuilderIcons] || bodybuilderIcons.default;
+    }
+    
+    return bodybuilderIcons.default;
   };
 
   const { goal, experienceLevel, daysPerWeek, bodySplit, workoutDays, priorityMuscles } = workoutPlan;
@@ -96,6 +135,15 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPl
           <div className="flex gap-2">
             <Button 
               variant="outline" 
+              size="icon"
+              onClick={toggleAudio} 
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black"
+              title={audioEnabled ? "Mute sounds" : "Enable sounds"}
+            >
+              {audioEnabled ? <Volume2 /> : <VolumeX />}
+            </Button>
+            <Button 
+              variant="outline" 
               onClick={onReset} 
               className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black"
             >
@@ -106,7 +154,7 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPl
               onClick={makeMoreIntense}
               className="bg-red-600 hover:bg-red-700 border-2 border-white font-bold"
             >
-              <Flame className="mr-2 h-4 w-4" /> NOT HARDCORE ENOUGH
+              <Flame className="mr-2 h-4 w-4" /> MAX IT OUT
             </Button>
           </div>
         </div>
@@ -152,14 +200,29 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPl
             <Card className="border-2 border-red-600 bg-black">
               <CardHeader className="border-b border-red-600 bg-gradient-to-r from-red-900 to-black">
                 <div className="flex justify-between items-center">
-                  <CardTitle className="text-3xl font-black text-white uppercase">
-                    Day {day.day}: {formatFocus(day.focus)} Focus
-                  </CardTitle>
+                  <div className="flex items-center gap-4">
+                    {/* Bodybuilder Icon */}
+                    <div className="hidden md:block h-16 w-16 rounded-full overflow-hidden border-2 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.7)]">
+                      <img 
+                        src={getBodybuilderIcon(day.focus)} 
+                        alt="Bodybuilder Icon" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback if image doesn't load
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                    <CardTitle className="text-3xl font-black text-white uppercase">
+                      Day {day.day}: {formatFocus(day.focus)} Focus
+                    </CardTitle>
+                  </div>
                   <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={() => playAudio("/audio/lightweight-baby.mp3")}
                     className="rounded-full bg-red-600 hover:bg-red-700 text-white"
+                    disabled={!audioEnabled}
                   >
                     <Volume2 className="h-6 w-6" />
                   </Button>
