@@ -1,6 +1,3 @@
 
-import { useToast as useToastOriginal, toast as toastOriginal } from "@/components/ui/use-toast";
-
-// Re-export with the same API
-export const useToast = useToastOriginal;
-export const toast = toastOriginal;
+// Re-export toast functions from the UI component
+export { useToast, toast } from "@/components/ui/use-toast";
