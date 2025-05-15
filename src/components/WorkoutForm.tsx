@@ -276,11 +276,13 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
                   } transition-all duration-200`}
                   onClick={() => togglePriorityMuscle(muscle.value)}
                 >
-                  <Checkbox 
-                    id={`muscle-${muscle.value}`}
-                    checked={isChecked}
-                    className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                  />
+                  <div className="flex-shrink-0">
+                    <Checkbox 
+                      id={`muscle-${muscle.value}`}
+                      checked={isChecked}
+                      className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                    />
+                  </div>
                   <Label 
                     htmlFor={`muscle-${muscle.value}`}
                     className="font-medium cursor-pointer uppercase"
