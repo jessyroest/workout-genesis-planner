@@ -4,7 +4,7 @@ import WorkoutForm from "@/components/WorkoutForm";
 import WorkoutPlan from "@/components/WorkoutPlan";
 import { FormData, WorkoutPlan as WorkoutPlanType } from "@/types/workout";
 import { generateWorkoutPlan } from "@/utils/workoutGenerator";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlanType | null>(null);
@@ -15,8 +15,8 @@ const Index = () => {
     setWorkoutPlan(generatedPlan);
     
     toast({
-      title: "BEAST MODE PLAN GENERATED!",
-      description: `YOUR ${formData.daysPerWeek}-DAY ${formData.goal.toUpperCase()} PLAN IS READY. LET'S CRUSH IT! 💪`,
+      title: "DOMAIN EXPANDED!",
+      description: `YOUR ${formData.daysPerWeek}-DAY ${formData.goal.toUpperCase()} JUJUTSU PLAN IS READY. EMBRACE THE CURSE! 🔮`,
       variant: "destructive"
     });
     
@@ -50,17 +50,17 @@ const Index = () => {
       <div className="container mx-auto px-4 py-12 relative z-10">
         <header className="text-center mb-12">
           <div className="flex flex-col items-center">
-            <h1 className="text-6xl md:text-7xl font-black mb-4 uppercase bg-gradient-to-r from-red-600 via-red-500 to-white inline-block text-transparent bg-clip-text tracking-tight">
-              Tren Twins
+            <h1 className="text-6xl md:text-7xl font-black mb-4 uppercase bg-gradient-to-r from-blue-600 via-purple-500 to-white inline-block text-transparent bg-clip-text tracking-tight">
+              Jujutsu Fitness
             </h1>
-            <div className="w-24 h-2 bg-red-600 my-2"></div>
+            <div className="w-24 h-2 bg-blue-600 my-2"></div>
             <p className="text-2xl font-bold uppercase tracking-wide text-gray-300 mt-2">
-              Workout Generator
+              Sorcery Training Program
             </p>
           </div>
           <p className="text-gray-400 max-w-2xl mx-auto mt-6 font-bold">
-            Build a hypertrophy-focused training program that will push your limits and maximize your gains.
-            No excuses. No compromises. JUST RESULTS.
+            Build your cursed technique through physical training that will push your limits beyond human potential.
+            No binding vows. No compromises. UNLIMITED VOID.
           </p>
         </header>
 
@@ -73,7 +73,7 @@ const Index = () => {
         </main>
         
         <footer className="mt-16 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p className="text-sm">© 2025 Tren Twins Workout Generator | <span className="text-red-500">ALL KINDS OF GAINZ</span></p>
+          <p className="text-sm">© 2025 Jujutsu Fitness Workout Generator | <span className="text-blue-500">POWERED BY CURSED ENERGY</span></p>
         </footer>
       </div>
     </div>
