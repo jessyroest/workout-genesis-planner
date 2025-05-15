@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { FormData, Goal, ExperienceLevel, MuscleGroup, BodySplit } from "../types/workout";
 import { Button } from "@/components/ui/button";
@@ -280,7 +279,6 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
                   <Checkbox 
                     id={`muscle-${muscle.value}`}
                     checked={isChecked}
-                    // Remove the onCheckedChange prop to prevent the infinite loop
                     className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
                   />
                   <Label 
