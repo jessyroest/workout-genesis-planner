@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { FormData, Goal, ExperienceLevel, CurseTechnique, SpiritAnimal, Playlist } from "../types/workout";
 import { Button } from "@/components/ui/button";
