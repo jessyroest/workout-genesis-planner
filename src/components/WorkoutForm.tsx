@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FormData, Goal, ExperienceLevel, MuscleGroup, BodySplit, CurseTechnique, SpiritAnimal, Playlist } from "../types/workout";
 import { Button } from "@/components/ui/button";
@@ -307,7 +308,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
                       id={`muscle-${muscle.value}`}
                       checked={isChecked}
                       className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                      // Remove onCheckedChange to prevent double state updates
+                      // Removing onCheckedChange to prevent double state updates
                     />
                   </div>
                   <Label 
