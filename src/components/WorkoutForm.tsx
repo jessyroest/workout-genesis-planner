@@ -265,30 +265,33 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
           </div>
           
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-            {muscleOptions.map((muscle) => (
-              <div 
-                key={muscle.value}
-                className={`flex items-center space-x-2 p-3 border-2 rounded-md cursor-pointer ${
-                  formData.priorityMuscles.includes(muscle.value) 
-                    ? 'border-red-600 bg-red-900/30 shadow-[0_0_15px_rgba(239,68,68,0.7)]' 
-                    : 'border-gray-700 hover:border-red-600/50 bg-gray-900'
-                } transition-all duration-200`}
-                onClick={() => togglePriorityMuscle(muscle.value)}
-              >
-                <Checkbox 
-                  id={`muscle-${muscle.value}`}
-                  checked={formData.priorityMuscles.includes(muscle.value)} 
-                  onCheckedChange={() => togglePriorityMuscle(muscle.value)}
-                  className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
-                />
-                <Label 
-                  htmlFor={`muscle-${muscle.value}`}
-                  className="font-medium cursor-pointer uppercase"
+            {muscleOptions.map((muscle) => {
+              const isChecked = formData.priorityMuscles.includes(muscle.value);
+              return (
+                <div 
+                  key={muscle.value}
+                  className={`flex items-center space-x-2 p-3 border-2 rounded-md cursor-pointer ${
+                    isChecked 
+                      ? 'border-red-600 bg-red-900/30 shadow-[0_0_15px_rgba(239,68,68,0.7)]' 
+                      : 'border-gray-700 hover:border-red-600/50 bg-gray-900'
+                  } transition-all duration-200`}
+                  onClick={() => togglePriorityMuscle(muscle.value)}
                 >
-                  {muscle.label}
-                </Label>
-              </div>
-            ))}
+                  <Checkbox 
+                    id={`muscle-${muscle.value}`}
+                    checked={isChecked}
+                    // Remove the onCheckedChange prop to prevent the infinite loop
+                    className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                  />
+                  <Label 
+                    htmlFor={`muscle-${muscle.value}`}
+                    className="font-medium cursor-pointer uppercase"
+                  >
+                    {muscle.label}
+                  </Label>
+                </div>
+              );
+            })}
           </div>
         </div>
 
