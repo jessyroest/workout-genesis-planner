@@ -1,8 +1,7 @@
-
 import { useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { MuscleGroup } from "@/types/workout";
+import { MuscleGroup } from "../types/workout";
 import { Mesh, MeshStandardMaterial, PointLight } from "three";
 
 interface MuscleModelProps {

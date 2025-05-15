@@ -1,4 +1,3 @@
-
 import { exercises, trenQuotes } from "../data/exercises";
 import { 
   Exercise, 
@@ -183,7 +182,11 @@ const getRandomQuote = (): string => {
 
 // Main function to generate a workout plan
 export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
-  const { goal, experienceLevel, daysPerWeek, bodySplit, priorityMuscles, limitations } = formData;
+  const { goal, experienceLevel, daysPerWeek } = formData;
+  const bodySplit = formData.bodySplit || "zenin style";
+  const priorityMuscles = formData.priorityMuscles || [];
+  const limitations = formData.limitations || [];
+  
   const workoutSplit = generateWorkoutSplit(daysPerWeek, bodySplit);
   
   // Generate workout days
@@ -262,7 +265,9 @@ export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
       focus: day.focus,
       workoutSets,
       notes: generateWorkoutNotes(goal, experienceLevel),
-      quote: getRandomQuote()
+      quote: getRandomQuote(),
+      name: `Day ${day.day}`,
+      exercises: []
     };
   });
 
@@ -291,7 +296,7 @@ export const makeWorkoutMoreIntense = (workoutPlan: WorkoutPlan): WorkoutPlan =>
       
       // Add an intensity technique if none exists
       if (!set.intensityTechnique) {
-        moreIntenseSet.intensityTechnique = getIntensityTechnique(workoutPlan.experienceLevel);
+        moreIntenseSet.intensityTechnique = getIntensityTechnique(workoutPlan.experienceLevel as ExperienceLevel);
       }
       
       return moreIntenseSet;

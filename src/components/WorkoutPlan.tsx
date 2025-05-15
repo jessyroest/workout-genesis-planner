@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { WorkoutPlan as WorkoutPlanType, IntensityTechnique } from "../types/workout";
+import { WorkoutPlan as WorkoutPlanType, WorkoutDay, IntensityTechnique } from "../types/workout";
 import { 
   Tabs, 
   TabsContent, 

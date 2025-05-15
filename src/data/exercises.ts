@@ -1,4 +1,3 @@
-
 import { Exercise, Goal, ExperienceLevel, MuscleGroup, IntensityTechnique } from "../types/workout";
 
 export const exercises: Exercise[] = [
