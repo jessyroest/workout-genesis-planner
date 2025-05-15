@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FormData, Goal, ExperienceLevel, MuscleGroup, BodySplit } from "../types/workout";
 import { Button } from "@/components/ui/button";
@@ -281,6 +282,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
                       id={`muscle-${muscle.value}`}
                       checked={isChecked}
                       className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                      // Remove any onCheckedChange prop here to avoid circular updates
                     />
                   </div>
                   <Label 
