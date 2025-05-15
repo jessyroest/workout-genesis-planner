@@ -4,7 +4,7 @@ import { FormData, Goal, ExperienceLevel, MuscleGroup, BodySplit } from "../type
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dumbbell, Flame, User, Calendar, CheckSquare, X } from "lucide-react";
+import { Dumbbell, Flame, User, Calendar, CheckSquare, X, Zap, Heart, Timer, Award, Activity } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +26,50 @@ const muscleOptions: { value: MuscleGroup; label: string }[] = [
   { value: "calves", label: "Calves" },
   { value: "traps", label: "Traps" },
   { value: "lats", label: "Lats" },
-  { value: "glutes", label: "Glutes" }
+  { value: "glutes", label: "Glutes" },
+  { value: "forearms", label: "Forearms" },
+  { value: "neck", label: "Neck" },
+  { value: "hamstrings", label: "Hamstrings" },
+  { value: "quads", label: "Quads" },
+  { value: "abs", label: "Abs" }
+];
+
+// Define goals with icons and descriptions
+const goalOptions = [
+  { value: "muscle gain", icon: Dumbbell, label: "MASS BUILDER", description: "Build serious size and muscle density" },
+  { value: "shredding", icon: Flame, label: "GET SHREDDED", description: "Lose fat while maintaining muscle definition" },
+  { value: "strength", icon: Award, label: "PURE STRENGTH", description: "Maximize your lifts and raw strength output" },
+  { value: "athletic performance", icon: Zap, label: "ATHLETIC PERFORMANCE", description: "Train for speed, agility, and endurance" },
+  { value: "body recomposition", icon: Activity, label: "BODY RECOMP", description: "Build muscle and lose fat simultaneously" },
+  { value: "improve conditioning", icon: Timer, label: "CONDITIONING", description: "Boost stamina and cardiovascular health" },
+  { value: "powerbuilding", icon: Award, label: "POWERBUILDING", description: "Mix of strength and size goals" },
+  { value: "endurance training", icon: Activity, label: "ENDURANCE", description: "Focus on long-term stamina" },
+  { value: "aesthetic physique", icon: Heart, label: "AESTHETICS", description: "Train for symmetry and proportions" },
+  { value: "rehabilitation", icon: Activity, label: "REHAB/MOBILITY", description: "Recover from injury, improve movement" }
+];
+
+// Define experience levels with descriptions
+const experienceLevels = [
+  { value: "beginner", label: "BEGINNER", description: "0-6 months of consistent training" },
+  { value: "lower intermediate", label: "LOWER INTERMEDIATE", description: "6-12 months, still learning" },
+  { value: "intermediate", label: "INTERMEDIATE", description: "1-2 years of serious training" },
+  { value: "upper intermediate", label: "UPPER INTERMEDIATE", description: "2-3 years, consistent" },
+  { value: "advanced", label: "ADVANCED", description: "3+ years with structure" },
+  { value: "elite", label: "ELITE", description: "Competitive level training" }
+];
+
+// Define body splits with descriptions
+const bodySplits = [
+  { value: "push/pull/legs", label: "PUSH/PULL/LEGS", description: "3-6 day rotation focusing on movement patterns" },
+  { value: "upper/lower", label: "UPPER/LOWER", description: "Split between upper and lower body workouts" },
+  { value: "bro split", label: "BRO SPLIT", description: "1 muscle group per day" },
+  { value: "full body", label: "FULL BODY", description: "Train the entire body each workout" },
+  { value: "phul", label: "PHUL", description: "Power Hypertrophy Upper Lower" },
+  { value: "phat", label: "PHAT", description: "Power Hypertrophy Adaptive Training" },
+  { value: "5x5", label: "5×5 STRENGTH", description: "Focus on compound lifts for strength" },
+  { value: "calisthenics", label: "CALISTHENICS", description: "Bodyweight training focus" },
+  { value: "hybrid", label: "HYBRID", description: "Mix of strength, hypertrophy & conditioning" },
+  { value: "custom", label: "CUSTOM", description: "Customized rotational split" }
 ];
 
 const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
@@ -79,7 +122,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
       <form onSubmit={handleSubmit} className="space-y-8 bg-black p-6 border-2 border-red-600 rounded-lg">
         {/* Fitness Goal Selection */}
         <div>
-          <h3 className="text-2xl font-bold mb-3 uppercase text-white">WHAT'S YOUR GOAL, BEAST?</h3>
+          <h3 className="text-2xl font-bold mb-3 uppercase text-white">💪 WHAT'S YOUR GOAL, BEAST?</h3>
           <Tabs
             defaultValue={formData.goal}
             className="w-full"
@@ -88,53 +131,62 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
               goal: value as Goal
             })}
           >
-            <TabsList className="grid w-full grid-cols-3 bg-gray-900 h-auto">
-              <TabsTrigger 
-                value="muscle gain" 
-                className="flex flex-col py-6 px-2 items-center gap-2 font-bold text-lg h-full data-[state=active]:bg-red-600"
-                onClick={() => playAudio("/audio/you-gotta-lift-heavy-bro.mp3")}
-              >
-                <Dumbbell className="h-8 w-8" />
-                <span className="uppercase">MASS BUILDER</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="shredding" 
-                className="flex flex-col py-6 px-2 items-center gap-2 font-bold text-lg h-full data-[state=active]:bg-red-600"
-                onClick={() => playAudio("/audio/lightweight-baby.mp3")}
-              >
-                <Flame className="h-8 w-8" />
-                <span className="uppercase">GET SHREDDED</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="strength" 
-                className="flex flex-col py-6 px-2 items-center gap-2 font-bold text-lg h-full data-[state=active]:bg-red-600"
-              >
-                <User className="h-8 w-8" />
-                <span className="uppercase">PURE STRENGTH</span>
-              </TabsTrigger>
+            <TabsList className="grid grid-cols-2 lg:grid-cols-5 bg-gray-900 h-auto">
+              {goalOptions.slice(0, 5).map(option => (
+                <TabsTrigger 
+                  key={option.value}
+                  value={option.value} 
+                  className="flex flex-col py-6 px-2 items-center gap-2 font-bold text-lg h-full data-[state=active]:bg-red-600"
+                  onClick={() => playAudio("/audio/you-gotta-lift-heavy-bro.mp3")}
+                >
+                  <option.icon className="h-8 w-8" />
+                  <span className="uppercase text-center text-sm">{option.label}</span>
+                </TabsTrigger>
+              ))}
             </TabsList>
+            
+            <div className="mt-2">
+              <TabsList className="grid grid-cols-2 lg:grid-cols-5 bg-gray-900 h-auto">
+                {goalOptions.slice(5).map(option => (
+                  <TabsTrigger 
+                    key={option.value}
+                    value={option.value} 
+                    className="flex flex-col py-6 px-2 items-center gap-2 font-bold text-lg h-full data-[state=active]:bg-red-600"
+                    onClick={() => playAudio("/audio/lightweight-baby.mp3")}
+                  >
+                    <option.icon className="h-8 w-8" />
+                    <span className="uppercase text-center text-sm">{option.label}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+            
+            <div className="mt-4 text-center text-sm text-gray-400">
+              {goalOptions.find(g => g.value === formData.goal)?.description}
+            </div>
           </Tabs>
         </div>
 
         {/* Experience Level Selection */}
         <div>
-          <h3 className="text-2xl font-bold mb-3 uppercase text-white">EXPERIENCE LEVEL</h3>
-          <div className="grid grid-cols-3 gap-4">
-            {["beginner", "intermediate", "advanced"].map((level) => (
+          <h3 className="text-2xl font-bold mb-3 uppercase text-white">🧠 EXPERIENCE LEVEL</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {experienceLevels.map((level) => (
               <Card 
-                key={level}
+                key={level.value}
                 className={`cursor-pointer transition-all border-2 ${
-                  formData.experienceLevel === level 
+                  formData.experienceLevel === level.value 
                     ? 'border-red-600 bg-red-900/30' 
                     : 'border-gray-700 hover:border-red-600/50 bg-gray-900'
                 }`}
                 onClick={() => setFormData({
                   ...formData,
-                  experienceLevel: level as ExperienceLevel
+                  experienceLevel: level.value as ExperienceLevel
                 })}
               >
-                <CardContent className="flex items-center justify-center p-6">
-                  <p className="font-bold uppercase text-xl">{level}</p>
+                <CardContent className="flex flex-col items-center justify-center p-4">
+                  <p className="font-bold uppercase text-xl mt-2">{level.label}</p>
+                  <p className="text-xs text-gray-400 mt-1 text-center">{level.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -143,14 +195,9 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
 
         {/* Body Split Selection */}
         <div>
-          <h3 className="text-2xl font-bold mb-3 uppercase text-white">TRAINING SPLIT</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              { value: "push/pull/legs", label: "PUSH/PULL/LEGS" },
-              { value: "upper/lower", label: "UPPER/LOWER" },
-              { value: "bro split", label: "BRO SPLIT" },
-              { value: "full body", label: "FULL BODY" }
-            ].map((split) => (
+          <h3 className="text-2xl font-bold mb-3 uppercase text-white">🔄 TRAINING SPLIT</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {bodySplits.map((split) => (
               <Card 
                 key={split.value}
                 className={`cursor-pointer transition-all border-2 ${
@@ -163,8 +210,9 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
                   bodySplit: split.value as BodySplit
                 })}
               >
-                <CardContent className="flex items-center justify-center p-6">
-                  <p className="font-bold uppercase text-xl">{split.label}</p>
+                <CardContent className="flex flex-col items-center justify-center p-3">
+                  <p className="font-bold uppercase text-sm text-center">{split.label}</p>
+                  <p className="text-xs text-gray-400 mt-1 text-center">{split.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -173,20 +221,30 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
 
         {/* Days Per Week Selection */}
         <div>
-          <h3 className="text-2xl font-bold mb-3 uppercase text-white">HOW MANY DAYS CAN YOU TRAIN?</h3>
-          <div className="grid grid-cols-7 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7].map((days) => (
+          <h3 className="text-2xl font-bold mb-3 uppercase text-white">🗓️ HOW MANY DAYS CAN YOU TRAIN?</h3>
+          <div className="grid grid-cols-9 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7, "2x", "Flex"].map((days, index) => (
               <Card 
-                key={days}
+                key={index}
                 className={`cursor-pointer transition-all border-2 ${
-                  formData.daysPerWeek === days 
+                  (typeof days === 'number' && formData.daysPerWeek === days) 
                     ? 'border-red-600 bg-red-900/30' 
                     : 'border-gray-700 hover:border-red-600/50 bg-gray-900'
                 }`}
-                onClick={() => setFormData({
-                  ...formData,
-                  daysPerWeek: days
-                })}
+                onClick={() => {
+                  if (typeof days === 'number') {
+                    setFormData({
+                      ...formData,
+                      daysPerWeek: days
+                    });
+                  } else {
+                    // Handle special cases (default to 4 days for now)
+                    setFormData({
+                      ...formData,
+                      daysPerWeek: 4
+                    });
+                  }
+                }}
               >
                 <CardContent className="flex flex-col items-center justify-center p-4">
                   <Calendar className="h-5 w-5 mb-1" />
@@ -199,7 +257,7 @@ const WorkoutForm: React.FC<WorkoutFormProps> = ({ onSubmit }) => {
 
         {/* Priority Muscle Groups */}
         <div>
-          <h3 className="text-2xl font-bold mb-3 uppercase text-white">PRIORITY MUSCLE GROUPS</h3>
+          <h3 className="text-2xl font-bold mb-3 uppercase text-white">🏆 PRIORITY MUSCLE GROUPS</h3>
           
           {/* 3D Muscle Visualization */}
           <div className="mb-6">

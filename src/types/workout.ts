@@ -1,7 +1,24 @@
 
-export type Goal = "muscle gain" | "fat loss" | "strength" | "shredding";
+export type Goal = 
+  | "muscle gain" 
+  | "fat loss" 
+  | "strength" 
+  | "shredding" 
+  | "athletic performance" 
+  | "body recomposition"
+  | "improve conditioning"
+  | "powerbuilding"
+  | "endurance training"
+  | "aesthetic physique"
+  | "rehabilitation";
 
-export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
+export type ExperienceLevel = 
+  | "beginner" 
+  | "lower intermediate"
+  | "intermediate" 
+  | "upper intermediate"
+  | "advanced" 
+  | "elite";
 
 export type MuscleGroup =
   | "chest"
@@ -24,7 +41,17 @@ export type MuscleGroup =
   | "quads"
   | "abs";
 
-export type BodySplit = "push/pull/legs" | "bro split" | "upper/lower" | "full body";
+export type BodySplit = 
+  | "push/pull/legs" 
+  | "bro split" 
+  | "upper/lower" 
+  | "full body"
+  | "phul"
+  | "phat"
+  | "5x5"
+  | "calisthenics"
+  | "hybrid"
+  | "custom";
 
 export type IntensityTechnique = 
   | "drop set" 
