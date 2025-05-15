@@ -32,20 +32,20 @@ const getRandomExercises = (exerciseList: Exercise[], count: number): Exercise[]
 // Helper function to determine sets and reps based on goal and experience
 const getSetsAndReps = (goal: Goal, experienceLevel: ExperienceLevel): { sets: number; reps: string; rest: number } => {
   switch(goal) {
-    case "muscle gain":
-      if (experienceLevel === "beginner") return { sets: 3, reps: "8-12", rest: 60 };
-      if (experienceLevel === "intermediate") return { sets: 4, reps: "8-12", rest: 90 };
+    case "cursed mass gain":
+      if (experienceLevel === "grade 4") return { sets: 3, reps: "8-12", rest: 60 };
+      if (experienceLevel === "grade 3") return { sets: 4, reps: "8-12", rest: 90 };
       return { sets: 5, reps: "8-12", rest: 90 };
     
-    case "strength":
-      if (experienceLevel === "beginner") return { sets: 3, reps: "5-8", rest: 120 };
-      if (experienceLevel === "intermediate") return { sets: 4, reps: "3-6", rest: 180 };
+    case "heavenly pact strength":
+      if (experienceLevel === "grade 4") return { sets: 3, reps: "5-8", rest: 120 };
+      if (experienceLevel === "grade 3") return { sets: 4, reps: "3-6", rest: 180 };
       return { sets: 5, reps: "2-5", rest: 240 };
     
-    case "shredding":
-    case "fat loss":
-      if (experienceLevel === "beginner") return { sets: 3, reps: "12-15", rest: 30 };
-      if (experienceLevel === "intermediate") return { sets: 3, reps: "15-20", rest: 45 };
+    case "domain expansion shred":
+    case "speed-type fighter":
+      if (experienceLevel === "grade 4") return { sets: 3, reps: "12-15", rest: 30 };
+      if (experienceLevel === "grade 3") return { sets: 3, reps: "15-20", rest: 45 };
       return { sets: 4, reps: "15-20", rest: 30 };
     
     default:
@@ -55,12 +55,12 @@ const getSetsAndReps = (goal: Goal, experienceLevel: ExperienceLevel): { sets: n
 
 // Generate different workout splits based on days per week and split preference
 const generateWorkoutSplit = (daysPerWeek: number, bodySplit: BodySplit): { day: number; focus: MuscleGroup | MuscleGroup[] }[] => {
-  // Push/Pull/Legs Split
-  if (bodySplit === "push/pull/legs") {
+  // Zenin Style (Push/Pull/Legs)
+  if (bodySplit === "zenin style") {
     const basePPL = [
-      { focus: ["chest", "shoulders", "triceps"] as MuscleGroup[] },  // Push
-      { focus: ["back", "biceps"] as MuscleGroup[] },               // Pull
-      { focus: ["legs", "core"] as MuscleGroup[] },                 // Legs
+      { focus: ["demonic chest", "shoulder domination", "arm control"] as MuscleGroup[] },  // Push
+      { focus: ["titanic back", "arm control"] as MuscleGroup[] },               // Pull
+      { focus: ["legs of steel", "core seal"] as MuscleGroup[] },                 // Legs
     ];
     
     // Add days based on frequency
@@ -76,11 +76,11 @@ const generateWorkoutSplit = (daysPerWeek: number, bodySplit: BodySplit): { day:
     return workoutSplit;
   }
   
-  // Upper/Lower Split
-  if (bodySplit === "upper/lower") {
+  // Inverted Spear Protocol (Upper/Lower)
+  if (bodySplit === "inverted spear protocol") {
     const baseUL = [
-      { focus: ["chest", "back", "shoulders", "arms"] as MuscleGroup[] },  // Upper
-      { focus: ["legs", "core"] as MuscleGroup[] },                      // Lower
+      { focus: ["demonic chest", "titanic back", "shoulder domination", "arm control"] as MuscleGroup[] },  // Upper
+      { focus: ["legs of steel", "core seal"] as MuscleGroup[] },                      // Lower
     ];
     
     const workoutSplit: { day: number; focus: MuscleGroup | MuscleGroup[] }[] = [];
@@ -95,19 +95,19 @@ const generateWorkoutSplit = (daysPerWeek: number, bodySplit: BodySplit): { day:
     return workoutSplit;
   }
   
-  // Bro Split (body part per day)
-  if (bodySplit === "bro split") {
+  // Domain Split (Bro Split - body part per day)
+  if (bodySplit === "domain split") {
     const baseBroSplit = [
-      { focus: "chest" as MuscleGroup },
-      { focus: "back" as MuscleGroup },
-      { focus: "shoulders" as MuscleGroup },
-      { focus: "arms" as MuscleGroup },
-      { focus: "legs" as MuscleGroup },
+      { focus: "demonic chest" as MuscleGroup },
+      { focus: "titanic back" as MuscleGroup },
+      { focus: "shoulder domination" as MuscleGroup },
+      { focus: "arm control" as MuscleGroup },
+      { focus: "legs of steel" as MuscleGroup },
     ];
     
     // Add core and rest day for 6-7 day splits
     if (daysPerWeek >= 6) {
-      baseBroSplit.push({ focus: "core" as MuscleGroup });
+      baseBroSplit.push({ focus: "core seal" as MuscleGroup });
     }
     
     const workoutSplit: { day: number; focus: MuscleGroup | MuscleGroup[] }[] = [];
@@ -122,34 +122,37 @@ const generateWorkoutSplit = (daysPerWeek: number, bodySplit: BodySplit): { day:
     return workoutSplit;
   }
   
-  // Full Body
-  if (bodySplit === "full body") {
+  // Full Body Curse Mastery
+  if (bodySplit === "full body curse mastery") {
     const workoutSplit: { day: number; focus: MuscleGroup | MuscleGroup[] }[] = [];
     
     for (let i = 0; i < daysPerWeek; i++) {
+      // Use different focus for variety but still full body
+      const fullBodyFocus: MuscleGroup[] = ["demonic chest", "titanic back", "shoulder domination", "arm control", "legs of steel", "core seal"];
+      
       workoutSplit.push({
         day: i + 1,
-        focus: "full body" as MuscleGroup,
+        focus: fullBodyFocus,
       });
     }
     
     return workoutSplit;
   }
   
-  // Default to PPL if something goes wrong
-  return generateWorkoutSplit(daysPerWeek, "push/pull/legs");
+  // Default to Zenin Style if something goes wrong
+  return generateWorkoutSplit(daysPerWeek, "zenin style");
 };
 
 // Get an intensity technique based on experience level
 const getIntensityTechnique = (experienceLevel: ExperienceLevel): IntensityTechnique | undefined => {
-  if (experienceLevel === "beginner") {
-    return Math.random() > 0.7 ? "superset" : undefined;
+  if (experienceLevel === "grade 4") {
+    return Math.random() > 0.7 ? "black flash" : undefined;
   }
   
-  const techniques: IntensityTechnique[] = ["drop set", "superset", "rest-pause"];
+  const techniques: IntensityTechnique[] = ["domain expansion", "black flash", "simple domain"];
   
-  if (experienceLevel === "advanced") {
-    techniques.push("forced reps", "negative reps", "partials", "giant set");
+  if (experienceLevel === "grade 1" || experienceLevel === "special grade") {
+    techniques.push("maximum curse", "binding vow", "reversed curse", "hollow technique");
   }
   
   return techniques[Math.floor(Math.random() * techniques.length)];
@@ -158,14 +161,14 @@ const getIntensityTechnique = (experienceLevel: ExperienceLevel): IntensityTechn
 // Function to generate workout notes based on goal
 const generateWorkoutNotes = (goal: Goal, experienceLevel: ExperienceLevel): string => {
   switch(goal) {
-    case "muscle gain":
+    case "cursed mass gain":
       return "Focus on progressive overload by increasing weight or reps over time. Control the eccentric portion of each rep for maximum muscle damage.";
     
-    case "strength":
+    case "heavenly pact strength":
       return "Lift HEAVY! Rest 2-5 minutes between sets for full recovery. Focus on perfect form and full-body tension.";
     
-    case "fat loss":
-    case "shredding":
+    case "domain expansion shred":
+    case "speed-type fighter":
       return "Keep rest periods short (30-60 seconds) to maintain elevated heart rate. Superset exercises when possible for maximum caloric burn.";
     
     default:
@@ -192,10 +195,11 @@ export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
     if (typeof day.focus === "string") {
       // For single muscle group focus
       const focusExercises = getExercisesFor(day.focus as MuscleGroup, experienceLevel, goal);
-      const exerciseCount = day.focus === "full body" ? 1 : (experienceLevel === "beginner" ? 2 : 3);
+      const exerciseCount = experienceLevel === "grade 4" ? 2 : (experienceLevel === "grade 3" ? 3 : 4);
       
-      // Get exercises for this muscle group
-      const selectedExercises = getRandomExercises(focusExercises.length > 0 ? focusExercises : exercises.filter(e => e.muscleGroup === day.focus), exerciseCount);
+      // Get exercises for this muscle group - if none found, use any that match the muscle group
+      const availableExercises = focusExercises.length > 0 ? focusExercises : exercises.filter(e => e.muscleGroup === day.focus);
+      const selectedExercises = getRandomExercises(availableExercises, exerciseCount);
       
       // Check if this is a priority muscle group
       const isPriority = priorityMuscles.includes(day.focus);
@@ -206,7 +210,7 @@ export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
         const primaryExercise = i === 0 ? 1 : 0; // Add extra sets for the first exercise
         
         // Add intensity techniques for intermediate and advanced lifters
-        const intensityTechnique = experienceLevel !== "beginner" && i === 0 ? getIntensityTechnique(experienceLevel) : undefined;
+        const intensityTechnique = experienceLevel !== "grade 4" && i === 0 ? getIntensityTechnique(experienceLevel) : undefined;
         
         workoutSets.push({
           exercise: {
@@ -219,44 +223,15 @@ export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
           intensityTechnique
         });
       });
-
-      if (day.focus === "full body") {
-        // Add exercises for major muscle groups for a full body day
-        const muscleGroups: MuscleGroup[] = ["chest", "back", "shoulders", "legs", "arms", "core"];
-        muscleGroups.forEach(group => {
-          const groupExercises = getExercisesFor(group, experienceLevel, goal);
-          const exercise = getRandomExercises(groupExercises.length > 0 ? groupExercises : exercises.filter(e => e.muscleGroup === group), 1)[0];
-          
-          // Check if this is a priority muscle
-          const isPriority = priorityMuscles.includes(group);
-          
-          // Add more sets for priority muscles
-          const extraSets = isPriority ? 1 : 0;
-          
-          // Add intensity techniques for some exercises
-          const intensityTechnique = Math.random() > 0.7 ? getIntensityTechnique(experienceLevel) : undefined;
-          
-          if (exercise) {
-            workoutSets.push({
-              exercise: {
-                ...exercise,
-                isPriority
-              },
-              sets: sets + extraSets,
-              reps,
-              rest,
-              intensityTechnique
-            });
-          }
-        });
-      }
     } else {
       // For multiple muscle group focus
       (day.focus as MuscleGroup[]).forEach(muscleGroup => {
         const focusExercises = getExercisesFor(muscleGroup, experienceLevel, goal);
-        const exerciseCount = experienceLevel === "beginner" ? 1 : (experienceLevel === "intermediate" ? 2 : 3);
+        const exerciseCount = experienceLevel === "grade 4" ? 1 : (experienceLevel === "grade 3" ? 2 : 2);
         
-        const selectedExercises = getRandomExercises(focusExercises.length > 0 ? focusExercises : exercises.filter(e => e.muscleGroup === muscleGroup), exerciseCount);
+        // Handle potential empty exercise list
+        const availableExercises = focusExercises.length > 0 ? focusExercises : exercises.filter(e => e.muscleGroup === muscleGroup);
+        const selectedExercises = getRandomExercises(availableExercises, exerciseCount);
         
         // Check if this is a priority muscle
         const isPriority = priorityMuscles.includes(muscleGroup);
@@ -266,7 +241,7 @@ export const generateWorkoutPlan = (formData: FormData): WorkoutPlan => {
           const extraSets = isPriority ? 1 : 0;
           
           // Add intensity techniques for intermediate and advanced lifters
-          const intensityTechnique = experienceLevel !== "beginner" && Math.random() > 0.6 ? getIntensityTechnique(experienceLevel) : undefined;
+          const intensityTechnique = experienceLevel !== "grade 4" && Math.random() > 0.6 ? getIntensityTechnique(experienceLevel) : undefined;
           
           workoutSets.push({
             exercise: {

@@ -27,12 +27,12 @@ interface WorkoutPlanProps {
 
 // Bodybuilder icons based on muscle group focus
 const bodybuilderIcons = {
-  chest: "/images/kevin-levrone.jpg",
-  back: "/images/ronnie-coleman.jpg", 
-  shoulders: "/images/kevin-levrone.jpg",
-  arms: "/images/lee-priest.jpg",
-  legs: "/images/ronnie-coleman.jpg",
-  core: "/images/lee-priest.jpg",
+  "demonic chest": "/images/kevin-levrone.jpg",
+  "titanic back": "/images/ronnie-coleman.jpg", 
+  "shoulder domination": "/images/kevin-levrone.jpg",
+  "arm control": "/images/lee-priest.jpg",
+  "legs of steel": "/images/ronnie-coleman.jpg",
+  "core seal": "/images/lee-priest.jpg",
   default: "/images/ronnie-coleman.jpg"
 };
 
@@ -52,19 +52,19 @@ const WorkoutPlan: React.FC<WorkoutPlanProps> = ({ workoutPlan: initialWorkoutPl
   // Helper to describe intensity techniques
   const describeIntensityTechnique = (technique: IntensityTechnique) => {
     switch (technique) {
-      case "drop set":
+      case "domain expansion":
         return "After reaching failure, immediately drop the weight by ~20% and continue until failure again";
-      case "superset":
+      case "black flash":
         return "Perform this exercise back-to-back with the next exercise with minimal rest";
-      case "forced reps":
+      case "maximum curse":
         return "Have a spotter help you complete 2-3 additional reps after reaching failure";
-      case "rest-pause":
+      case "simple domain":
         return "After reaching failure, rest 15-20 seconds and continue for more reps";
-      case "giant set":
+      case "binding vow":
         return "Perform this exercise as part of a sequence of 3+ exercises without rest";
-      case "negative reps":
+      case "reversed curse":
         return "Focus on a slow (3-5 second) eccentric/lowering phase for each rep";
-      case "partials":
+      case "hollow technique":
         return "After reaching failure, perform partial range-of-motion reps until full failure";
       default:
         return "";

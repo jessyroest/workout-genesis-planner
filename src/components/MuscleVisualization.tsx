@@ -15,25 +15,21 @@ function HumanFigure({ priorityMuscles }: MuscleModelProps) {
   
   // Map muscle groups to body part positions
   const musclePositions: Record<MuscleGroup, [number, number, number]> = {
-    chest: [0, 0.4, 0.5],
-    back: [0, 0.4, -0.3],
-    shoulders: [0, 0.6, 0],
-    arms: [0.7, 0.2, 0],
-    legs: [0, -0.5, 0],
-    core: [0, 0, 0.3],
-    "full body": [0, 0, 0],
-    triceps: [0.6, 0.3, 0],
-    biceps: [0.65, 0.3, 0.2],
-    lats: [0.3, 0.3, -0.3],
-    calves: [0.2, -1, 0],
-    neck: [0, 0.8, 0],
-    grip: [0.9, 0, 0],
-    traps: [0, 0.6, -0.2],
-    forearms: [0.8, 0.1, 0],
-    glutes: [0, -0.3, -0.5],
-    hamstrings: [0, -0.6, -0.3],
-    quads: [0, -0.5, 0.3],
-    abs: [0, 0, 0.4]
+    "demonic chest": [0, 0.4, 0.5],
+    "titanic back": [0, 0.4, -0.3],
+    "shoulder domination": [0, 0.6, 0],
+    "arm control": [0.7, 0.2, 0],
+    "legs of steel": [0, -0.5, 0],
+    "core seal": [0, 0, 0.3],
+    "v-taper lats": [0.3, 0.3, -0.3],
+    "mountain traps": [0, 0.6, -0.2],
+    "explosive glutes": [0, -0.3, -0.5],
+    "unshakeable calves": [0.2, -1, 0],
+    "grip of a curse user": [0.9, 0, 0],
+    "posture stabilizers": [0, 0.8, -0.1],
+    "mobility and flexibility": [0, 0, 0],
+    "cardio conditioning": [0, 0.2, 0.1],
+    "recovery and regeneration": [0, 0, 0]
   };
   
   // Rotate the model slowly
