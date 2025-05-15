@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { WorkoutPlan as WorkoutPlanType, WorkoutDay, IntensityTechnique } from "../types/workout";
 import { 
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Flame, Dumbbell, Clock, RotateCcw, Volume2, VolumeX } from "lucide-react";
-import { makeWorkoutMoreIntense } from "@/utils/workoutGenerator";
+import { makeWorkoutMoreIntense } from "@/utils/workoutPlanGenerator";
 import { useToast } from "@/hooks/use-toast";
 
 interface WorkoutPlanProps {

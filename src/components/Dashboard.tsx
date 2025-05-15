@@ -7,8 +7,8 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import WorkoutForm from "@/components/WorkoutForm";
 import WorkoutPlan from "@/components/WorkoutPlan";
-import { FormData, WorkoutPlan as WorkoutPlanType } from "@/types/workout";
-import { generateWorkoutPlan } from "@/utils/workoutGenerator";
+import { FormData, WorkoutPlan as WorkoutPlanType, WorkoutDay } from "@/types/workout";
+import { generateWorkoutPlan } from "@/utils/workoutPlanGenerator";
 import { User } from "@supabase/supabase-js";
 import { UserWorkout } from "@/types/user";
 
@@ -175,7 +175,12 @@ const Dashboard = () => {
   
   const loadWorkout = (workout: UserWorkout) => {
     // Convert the saved workout format to the WorkoutPlan format
-    const days = workout.workout_days.map(day => ({
+    const workoutDays: WorkoutDay[] = workout.workout_days.map(day => ({
+      day: parseInt(day.day.replace("Day ", "")) || 1,
+      focus: "demonic chest", // Default focus since we don't have this info in saved format
+      workoutSets: [],
+      notes: "Loaded workout",
+      quote: "GO HARDER! NO PAIN, NO GAIN!",
       name: day.day,
       exercises: day.exercises
     }));
@@ -183,7 +188,9 @@ const Dashboard = () => {
     setWorkoutPlan({
       goal: workout.goal,
       experienceLevel: workout.experience_level,
-      days: days
+      days: workoutDays,
+      daysPerWeek: workoutDays.length,
+      workoutDays: workoutDays
     });
     
     toast({
