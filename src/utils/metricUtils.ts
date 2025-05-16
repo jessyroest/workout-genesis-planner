@@ -63,7 +63,15 @@ export const getUserMetrics = async (
       return [];
     }
     
-    return data || [];
+    // Type casting to ensure compatibility
+    return (data || []).map(item => ({
+      id: item.id,
+      user_id: item.user_id,
+      metric_type: item.metric_type as MetricType,
+      value: item.value,
+      created_at: item.created_at,
+      notes: item.notes
+    }));
   } catch (error) {
     console.error("Error in getUserMetrics:", error);
     return [];
