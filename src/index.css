@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Roboto+Condensed:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,258 +7,198 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 0 84% 60%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
-
-    --accent: 0 84% 60%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 84% 60%;
-
-    --radius: 0.5rem;
-  }
-
-  html.light-mode {
-    --background: 0 0% 95%;
-    --foreground: 0 0% 10%;
+    --background: 210 40% 98%;
+    --foreground: 220 40% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 220 40% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 220 40% 10%;
 
-    --primary: 0 84% 60%;
+    --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 92%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 40% 10%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 0 84% 60%;
+    --accent: 210 100% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 85%;
-    --input: 0 0% 85%;
-    --ring: 0 84% 60%;
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 211 100% 50%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 220 40% 10%;
+    --foreground: 220 40% 98%;
+
+    --card: 220 40% 13%;
+    --card-foreground: 220 40% 98%;
+
+    --popover: 220 40% 13%;
+    --popover-foreground: 220 40% 98%;
+
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 30% 16%;
+    --secondary-foreground: 220 40% 98%;
+
+    --muted: 220 30% 16%;
+    --muted-foreground: 220 20% 70%;
+
+    --accent: 210 100% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 30% 20%;
+    --input: 220 30% 16%;
+    --ring: 211 100% 50%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border selection:bg-primary/20 selection:text-primary;
   }
 
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Roboto Condensed', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    font-family: 'Inter', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-black tracking-tight;
-    font-family: 'Montserrat', sans-serif;
+    @apply font-heading tracking-tight;
   }
   
-  /* Noise texture effect */
-  .noise-bg::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.05;
-    z-index: -1;
-    pointer-events: none;
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/40 rounded-full transition-colors hover:bg-primary/60;
   }
   
-  /* Make buttons more aggressive and bold */
-  .btn-beast {
-    @apply bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-wide;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-    transition: all 0.1s ease;
+  /* Glass effect */
+  .glass {
+    @apply bg-white/10 dark:bg-white/5 backdrop-blur-lg border border-white/20 dark:border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-soft;
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-lg border border-slate-800/50;
   }
   
-  .btn-beast:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+  /* Content transitions */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
   }
-  
-  /* Pulse animation for emphasis */
-  @keyframes hard-pulse {
-    0%, 100% {
-      transform: scale(1);
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
     }
-    50% {
-      transform: scale(1.05);
-    }
-  }
-  
-  .pulse-hard {
-    animation: hard-pulse 2s ease-in-out infinite;
-  }
-
-  /* Theme transitions */
-  body, .theme-transition {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-
-  /* CSS for light mode */
-  html.light-mode body {
-    background-color: #f5f5f5;
-    color: #1a1a1a;
-  }
-
-  html.light-mode .bg-black\/50 {
-    background-color: rgba(255, 255, 255, 0.8);
-  }
-
-  html.light-mode .border-purple-800\/30 {
-    border-color: rgba(126, 34, 206, 0.2);
-  }
-
-  /* Anime-style effects */
-  .anime-glow {
-    box-shadow: 0 0 15px rgba(137, 67, 252, 0.5);
-    animation: glowPulse 3s infinite alternate;
-  }
-
-  @keyframes glowPulse {
-    0% {
-      box-shadow: 0 0 15px rgba(137, 67, 252, 0.5);
-    }
-    100% {
-      box-shadow: 0 0 25px rgba(137, 67, 252, 0.8);
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #111;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #8b5cf6;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9f7aea;
-}
-
-html.light-mode ::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
-
-html.light-mode ::-webkit-scrollbar-thumb {
-  background: #9f7aea;
-}
-
-/* Animation for entering elements */
-.fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  
+  /* Interactive elements */
+  .interactive-hover {
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-elevated active:scale-[0.98];
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .soft-shadow {
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
   }
-}
-
-/* Custom utility classes for our anime fitness theme */
-.anime-card {
-  @apply relative overflow-hidden rounded-lg border border-purple-500/30 bg-gradient-to-br from-gray-900/70 to-black/90 backdrop-blur-sm;
-  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-}
-
-.anime-highlight {
-  @apply bg-gradient-to-r from-purple-600 via-violet-500 to-indigo-500 bg-clip-text text-transparent;
-}
-
-.anime-button {
-  @apply relative overflow-hidden bg-gradient-to-r from-purple-700 to-indigo-800 text-white font-bold py-2 px-6 rounded-md transition-all duration-300;
-  box-shadow: 0 4px 10px -2px rgba(76, 29, 149, 0.5);
-}
-
-.anime-button:hover {
-  @apply from-purple-600 to-indigo-700;
-  box-shadow: 0 6px 15px -2px rgba(76, 29, 149, 0.6);
-}
-
-.anime-button:before {
-  content: '';
-  @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
-}
-
-.anime-button:hover:before {
-  @apply opacity-10;
-}
-
-/* Special pulse effect for key metrics */
-@keyframes specialPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-blue to-brand-cyan bg-clip-text text-transparent;
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  
+  /* Progress indicators */
+  .progress-bar-container {
+    @apply w-full h-2 bg-secondary rounded-full overflow-hidden;
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  
+  .progress-bar {
+    @apply h-full bg-primary transition-all duration-500 ease-out;
   }
-}
+  
+  /* Form elements */
+  .input-clean {
+    @apply bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-lg transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
+  }
+  
+  .btn-outline {
+    @apply border border-slate-200 dark:border-slate-700 hover:bg-secondary text-foreground font-medium px-4 py-2 rounded-lg transition-colors;
+  }
+  
+  /* Color utilities */
+  .bg-mesh {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(15 23 42 / 0.04)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
 
-.special-pulse {
-  animation: specialPulse 2s infinite;
-}
+  .dark .bg-mesh {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+  
+  /* Dashboard layout */
+  .dashboard-container {
+    @apply container mx-auto py-8 px-4 sm:px-6;
+  }
+  
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+  
+  .dashboard-card {
+    @apply bg-card rounded-xl border border-border shadow-soft p-5 transition-all hover:shadow-card;
+  }
 
-/* Progress bar animation */
-.progress-animate {
-  transition: width 1s cubic-bezier(0.65, 0, 0.35, 1);
+  /* Color utilities for chart elements */
+  .color-strength { @apply text-brand-red bg-brand-red/10 border-brand-red/30; }
+  .color-weight { @apply text-brand-blue bg-brand-blue/10 border-brand-blue/30; }
+  .color-fat { @apply text-brand-purple bg-brand-purple/10 border-brand-purple/30; }
+  .color-water { @apply text-brand-cyan bg-brand-cyan/10 border-brand-cyan/30; }
+  .color-sleep { @apply text-brand-purple bg-brand-purple/10 border-brand-purple/30; }
+  .color-meditation { @apply text-brand-teal bg-brand-teal/10 border-brand-teal/30; }
+  .color-vitamin { @apply text-brand-orange bg-brand-orange/10 border-brand-orange/30; }
+  .color-calories { @apply text-brand-orange bg-brand-orange/10 border-brand-orange/30; }
+  .color-protein { @apply text-brand-lime bg-brand-lime/10 border-brand-lime/30; }
+  .color-steps { @apply text-brand-green bg-brand-green/10 border-brand-green/30; }
+  .color-mood { @apply text-brand-pink bg-brand-pink/10 border-brand-pink/30; }
+  .color-fatigue { @apply text-brand-gray bg-brand-gray/10 border-brand-gray/30; }
 }
-
-/* Color utility classes for different habit types */
-.color-water { @apply text-blue-500 bg-blue-500/20 border-blue-500/30; }
-.color-sleep { @apply text-indigo-500 bg-indigo-500/20 border-indigo-500/30; }
-.color-meditation { @apply text-purple-500 bg-purple-500/20 border-purple-500/30; }
-.color-vitamin { @apply text-amber-500 bg-amber-500/20 border-amber-500/30; }
-.color-training { @apply text-red-500 bg-red-500/20 border-red-500/30; }
-.color-protein { @apply text-rose-500 bg-rose-500/20 border-rose-500/30; }
-.color-calories { @apply text-orange-500 bg-orange-500/20 border-orange-500/30; }
-.color-steps { @apply text-green-500 bg-green-500/20 border-green-500/30; }

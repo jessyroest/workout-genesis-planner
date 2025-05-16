@@ -10,7 +10,10 @@ export type MetricType =
   | "meditation" 
   | "vitamin" 
   | "steps"
-  | "strength";
+  | "strength"
+  | "protein"
+  | "fatigue"
+  | "mood";
 
 export interface UserMetric {
   id?: string;
@@ -113,4 +116,72 @@ export const getMetricsTrend = async (
     console.error("Error in getMetricsTrend:", error);
     return {dates: [], values: []};
   }
+};
+
+// New utility functions for enhanced metrics
+export const getMetricColor = (metricType: MetricType): string => {
+  const colors: Record<MetricType, string> = {
+    weight: '#2563eb', // blue
+    bodyFat: '#9333ea', // purple
+    sleep: '#3b82f6', // blue
+    water: '#0ea5e9', // sky blue
+    calories: '#f97316', // orange
+    meditation: '#8b5cf6', // violet
+    vitamin: '#eab308', // yellow
+    steps: '#22c55e', // green
+    strength: '#ef4444', // red
+    protein: '#dc2626', // dark red
+    fatigue: '#6b7280', // gray
+    mood: '#ec4899', // pink
+  };
+
+  return colors[metricType] || '#6b7280'; // default to gray
+};
+
+export const getMetricIcon = (metricType: MetricType): string => {
+  const icons: Record<MetricType, string> = {
+    weight: 'weight',
+    bodyFat: 'activity',
+    sleep: 'moon',
+    water: 'droplet',
+    calories: 'flame',
+    meditation: 'heart',
+    vitamin: 'pill', 
+    steps: 'footprints',
+    strength: 'dumbbell',
+    protein: 'egg',
+    fatigue: 'battery',
+    mood: 'smile',
+  };
+
+  return icons[metricType] || 'activity';
+};
+
+export const getMetricLabel = (metricType: MetricType): string => {
+  const labels: Record<MetricType, string> = {
+    weight: 'Weight (kg)',
+    bodyFat: 'Body Fat (%)',
+    sleep: 'Sleep (hrs)',
+    water: 'Water (liters)',
+    calories: 'Calories',
+    meditation: 'Meditation (min)',
+    vitamin: 'Vitamins Taken',
+    steps: 'Steps',
+    strength: 'Strength (kg)',
+    protein: 'Protein (g)',
+    fatigue: 'Fatigue Level',
+    mood: 'Mood Level',
+  };
+
+  return labels[metricType] || metricType;
+};
+
+// Get metrics goal direction (whether higher or lower is better)
+export const getGoalDirection = (metricType: MetricType): 'higher' | 'lower' | 'target' => {
+  const higherIsBetter = ['strength', 'steps', 'water', 'sleep', 'meditation', 'vitamin', 'protein', 'mood'];
+  const lowerIsBetter = ['bodyFat', 'fatigue'];
+  
+  if (higherIsBetter.includes(metricType)) return 'higher';
+  if (lowerIsBetter.includes(metricType)) return 'lower';
+  return 'target'; // Weight and calories depend on specific goals
 };
