@@ -1,342 +1,349 @@
 
-import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Play, Pause, SkipForward, SkipBack, Volume2, VolumeX } from 'lucide-react';
-import { formatTime } from '@/utils/aiUtils';
+import { useState, useRef } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import {
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  Volume2,
+  VolumeX,
+  Repeat,
+  Shuffle,
+  Music,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-interface Song {
+interface Track {
   title: string;
   artist: string;
-  duration: number;
-  cover: string;
-  url: string;
-  category: string;
+  duration: string;
+  category: "workout" | "cardio" | "cooldown" | "focus";
+  energy: "high" | "medium" | "low";
 }
 
-interface MusicPlayerProps {
-  workoutType?: string; // e.g. "cardio", "strength", "cooldown"
-}
-
-// Sample song data - in a real app, this would come from an API
-const SONGS: Song[] = [
-  {
-    title: "Warrior Spirit",
-    artist: "Power Training",
-    duration: 218,
-    cover: "/images/workout-music-1.jpg",
-    url: "/audio/bg-music.mp3", // Using the existing audio file
-    category: "strength"
-  },
-  {
-    title: "Ultimate Pump",
-    artist: "Gym Heroes",
-    duration: 195,
-    cover: "/images/workout-music-1.jpg",
-    url: "/audio/bg-music.mp3",
-    category: "strength"
-  },
-  {
-    title: "Maximum Effort",
-    artist: "Iron Will",
-    duration: 203,
-    cover: "/images/workout-music-1.jpg",
-    url: "/audio/bg-music.mp3",
-    category: "cardio"
-  },
-  {
-    title: "Zen Flow",
-    artist: "Mind & Muscle",
-    duration: 265,
-    cover: "/images/workout-music-1.jpg",
-    url: "/audio/bg-music.mp3",
-    category: "cooldown"
-  }
+const workoutTracks: Track[] = [
+  { title: "Beast Mode", artist: "Heavy Lifters", duration: "3:45", category: "workout", energy: "high" },
+  { title: "Iron Paradise", artist: "Gym Titans", duration: "4:12", category: "workout", energy: "high" },
+  { title: "Pump It Up", artist: "Fitness Crew", duration: "3:30", category: "workout", energy: "high" },
+  { title: "Zen Flow", artist: "Mind Masters", duration: "5:20", category: "cooldown", energy: "low" },
+  { title: "Cardio Blast", artist: "Run Squad", duration: "3:58", category: "cardio", energy: "high" },
+  { title: "Focus Zone", artist: "Mental Edge", duration: "4:05", category: "focus", energy: "medium" },
+  { title: "Power Hour", artist: "Strength Syndicate", duration: "3:22", category: "workout", energy: "high" },
+  { title: "Recovery Beat", artist: "Rest & Repair", duration: "4:45", category: "cooldown", energy: "low" },
 ];
 
-const MusicPlayer = ({ workoutType = "strength" }: MusicPlayerProps) => {
-  const [songs, setSongs] = useState<Song[]>([]);
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(0.7);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [volume, setVolume] = useState(80);
   const [isMuted, setIsMuted] = useState(false);
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const intervalRef = useRef<number | null>(null);
+  const [repeat, setRepeat] = useState(false);
+  const [shuffle, setShuffle] = useState(false);
+  const [category, setCategory] = useState<Track["category"] | "all">("all");
+  const { toast } = useToast();
 
-  useEffect(() => {
-    // Filter songs by workout type
-    const filteredSongs = SONGS.filter(song => 
-      song.category === workoutType || workoutType === "all"
+  // Filter tracks based on selected category
+  const filteredTracks = category === "all" 
+    ? workoutTracks 
+    : workoutTracks.filter(track => track.category === category);
+
+  const handlePlay = () => {
+    setIsPlaying(!isPlaying);
+    
+    toast({
+      description: isPlaying ? "Paused" : `Now playing: ${filteredTracks[currentTrackIndex].title}`,
+    });
+  };
+
+  const handleNext = () => {
+    if (shuffle) {
+      // Random track excluding current one
+      const availableTracks = filteredTracks.length > 1 
+        ? [...Array(filteredTracks.length).keys()].filter(i => i !== currentTrackIndex)
+        : [0];
+      const randomIndex = Math.floor(Math.random() * availableTracks.length);
+      setCurrentTrackIndex(availableTracks[randomIndex]);
+    } else {
+      setCurrentTrackIndex((prev) => 
+        prev === filteredTracks.length - 1 ? 0 : prev + 1
+      );
+    }
+    
+    if (isPlaying) {
+      toast({
+        description: `Now playing: ${filteredTracks[currentTrackIndex].title}`,
+      });
+    }
+  };
+
+  const handlePrevious = () => {
+    setCurrentTrackIndex((prev) => 
+      prev === 0 ? filteredTracks.length - 1 : prev - 1
     );
     
-    if (filteredSongs.length > 0) {
-      setSongs(filteredSongs);
-      setCurrentSongIndex(0);
-    } else {
-      setSongs(SONGS);
-    }
-    
-    // Initialize audio element
-    audioRef.current = new Audio(SONGS[0].url);
-    audioRef.current.volume = volume;
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [workoutType]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    
-    const handleEnded = () => {
-      // Go to next song when current song ends
-      if (currentSongIndex < songs.length - 1) {
-        setCurrentSongIndex(prev => prev + 1);
-      } else {
-        setCurrentSongIndex(0); // Loop back to the first song
-      }
-    };
-    
-    audioRef.current.addEventListener('ended', handleEnded);
-    
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.removeEventListener('ended', handleEnded);
-      }
-    };
-  }, [currentSongIndex, songs]);
-
-  // When song changes, update the audio source
-  useEffect(() => {
-    if (!audioRef.current || songs.length === 0) return;
-    
-    audioRef.current.src = songs[currentSongIndex].url;
-    audioRef.current.load();
-    
     if (isPlaying) {
-      audioRef.current.play();
-    }
-  }, [currentSongIndex, songs]);
-
-  // Start/stop the timer when playing state changes
-  useEffect(() => {
-    if (!audioRef.current) return;
-    
-    if (isPlaying) {
-      audioRef.current.play();
-      
-      intervalRef.current = window.setInterval(() => {
-        if (audioRef.current) {
-          setCurrentTime(audioRef.current.currentTime);
-        }
-      }, 1000);
-    } else {
-      audioRef.current.pause();
-      
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-  }, [isPlaying]);
-
-  // Handle volume changes
-  useEffect(() => {
-    if (!audioRef.current) return;
-    
-    audioRef.current.volume = isMuted ? 0 : volume;
-  }, [volume, isMuted]);
-
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
-
-  const handlePrevSong = () => {
-    if (currentSongIndex > 0) {
-      setCurrentSongIndex(prev => prev - 1);
-    } else {
-      setCurrentSongIndex(songs.length - 1); // Go to the last song
+      toast({
+        description: `Now playing: ${filteredTracks[currentTrackIndex].title}`,
+      });
     }
   };
 
-  const handleNextSong = () => {
-    if (currentSongIndex < songs.length - 1) {
-      setCurrentSongIndex(prev => prev + 1);
-    } else {
-      setCurrentSongIndex(0); // Loop back to the first song
+  const handleVolumeChange = (value: number[]) => {
+    setVolume(value[0]);
+    if (value[0] === 0) {
+      setIsMuted(true);
+    } else if (isMuted) {
+      setIsMuted(false);
     }
   };
 
-  const handleSeek = (value: number[]) => {
-    if (!audioRef.current) return;
-    
-    const newTime = value[0];
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  const toggleMute = () => {
+  const handleMuteToggle = () => {
     setIsMuted(!isMuted);
   };
 
-  // Current song info
-  const currentSong = songs[currentSongIndex] || {
-    title: "No song available",
-    artist: "",
-    duration: 0,
-    cover: "/images/workout-music-1.jpg"
+  const handleRepeatToggle = () => {
+    setRepeat(!repeat);
+    toast({
+      description: !repeat ? "Repeat enabled" : "Repeat disabled",
+    });
   };
+
+  const handleShuffleToggle = () => {
+    setShuffle(!shuffle);
+    toast({
+      description: !shuffle ? "Shuffle enabled" : "Shuffle disabled",
+    });
+  };
+
+  // Calculate progress for the fake progress bar
+  const progressPercent = isPlaying ? 45 : 0; // Just a static value for visual
+
+  // Get current track
+  const currentTrack = filteredTracks[
+    currentTrackIndex < filteredTracks.length ? currentTrackIndex : 0
+  ];
+
+  const categoryButtons = [
+    { value: "all", label: "All" },
+    { value: "workout", label: "Workout" },
+    { value: "cardio", label: "Cardio" },
+    { value: "cooldown", label: "Cooldown" },
+  ];
 
   return (
     <Card className="bg-black/50 border-purple-800/30 backdrop-blur">
-      <CardHeader className="pb-2">
+      <CardHeader>
         <CardTitle className="text-xl font-bold text-white flex items-center">
           <span className="bg-purple-900 p-2 rounded-md mr-2">🎵</span>
-          Workout Music
+          Music Player
         </CardTitle>
         <CardDescription className="text-gray-400">
-          Music to power your training
+          Workout playlists to boost your performance
         </CardDescription>
       </CardHeader>
+
       <CardContent>
-        <div className="flex items-center space-x-4">
-          {/* Album Cover */}
-          <div className="flex-shrink-0 w-16 h-16 relative">
-            <img 
-              src={currentSong.cover}
-              alt="Album cover"
-              className="w-full h-full object-cover rounded-md"
-              onError={(e) => {
-                e.currentTarget.src = '/images/ronnie-coleman.jpg'; // Fallback image
-              }}
-            />
-            <div className={`absolute inset-0 flex items-center justify-center bg-black/50 rounded-md ${isPlaying ? 'opacity-0' : 'opacity-100'}`}>
-              <Play className="h-8 w-8" />
+        <div className="flex flex-col items-center mb-4">
+          {/* Track visualization */}
+          <div className="w-full h-2 bg-gray-800 rounded-full mb-4 overflow-hidden">
+            <div 
+              className="h-full bg-purple-600 transition-all duration-1000 ease-linear"
+              style={{ width: `${progressPercent}%` }}
+            ></div>
+          </div>
+          
+          {/* Track info */}
+          <div className="w-full text-center mb-6">
+            <h3 className="text-xl font-bold text-white">
+              {currentTrack?.title || "No Track Selected"}
+            </h3>
+            <p className="text-gray-400">
+              {currentTrack?.artist || "Unknown Artist"}
+            </p>
+            <div className="flex justify-center mt-1">
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${
+                  currentTrack?.energy === "high" 
+                    ? "bg-red-900/50 text-red-400" 
+                    : currentTrack?.energy === "medium" 
+                    ? "bg-yellow-900/50 text-yellow-400"
+                    : "bg-blue-900/50 text-blue-400"
+                }`}
+              >
+                {currentTrack?.energy === "high" 
+                  ? "High Energy" 
+                  : currentTrack?.energy === "medium" 
+                  ? "Medium Energy" 
+                  : "Low Energy"}
+              </span>
             </div>
           </div>
           
-          {/* Song Info and Controls */}
-          <div className="flex-grow">
-            <div className="mb-1">
-              <div className="font-bold truncate">{currentSong.title}</div>
-              <div className="text-xs text-gray-400 truncate">{currentSong.artist}</div>
-            </div>
+          {/* Player controls */}
+          <div className="flex items-center justify-center space-x-4">
+            <Button 
+              onClick={handlePrevious} 
+              variant="outline" 
+              size="icon"
+              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+            >
+              <SkipBack className="h-5 w-5" />
+            </Button>
             
-            {/* Progress Bar */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
-                {formatTime(Math.floor(currentTime))}
-              </span>
-              <Slider
-                defaultValue={[0]}
-                value={[currentTime]}
-                max={currentSong.duration}
-                step={1}
-                onValueChange={handleSeek}
-                className="flex-grow h-1"
-              />
-              <span className="text-xs text-gray-400">
-                {formatTime(currentSong.duration)}
-              </span>
-            </div>
+            <Button 
+              onClick={handlePlay} 
+              variant="default" 
+              size="icon"
+              className="bg-purple-700 hover:bg-purple-600 h-12 w-12 rounded-full"
+            >
+              {isPlaying ? (
+                <Pause className="h-6 w-6" />
+              ) : (
+                <Play className="h-6 w-6 ml-1" />
+              )}
+            </Button>
             
-            {/* Controls */}
-            <div className="flex justify-between items-center mt-2">
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-8 w-8 hover:bg-gray-800"
-                  onClick={toggleMute}
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
+            <Button 
+              onClick={handleNext} 
+              variant="outline" 
+              size="icon"
+              className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+            >
+              <SkipForward className="h-5 w-5" />
+            </Button>
+          </div>
+          
+          {/* Additional controls */}
+          <div className="flex items-center mt-4 space-x-2 w-full max-w-md">
+            <Button 
+              onClick={handleRepeatToggle} 
+              variant="outline" 
+              size="icon"
+              className={`border-gray-700 ${repeat ? 'text-purple-500' : 'text-gray-400'} hover:bg-gray-800 hover:text-white`}
+            >
+              <Repeat className="h-4 w-4" />
+            </Button>
+            
+            <Button 
+              onClick={handleShuffleToggle} 
+              variant="outline" 
+              size="icon"
+              className={`border-gray-700 ${shuffle ? 'text-purple-500' : 'text-gray-400'} hover:bg-gray-800 hover:text-white`}
+            >
+              <Shuffle className="h-4 w-4" />
+            </Button>
+            
+            <div className="flex items-center flex-1 space-x-2 ml-2">
+              <Button 
+                onClick={handleMuteToggle} 
+                variant="ghost" 
+                size="icon"
+                className="text-gray-400 hover:text-white"
+              >
+                {isMuted || volume === 0 ? (
+                  <VolumeX className="h-4 w-4" />
+                ) : (
+                  <Volume2 className="h-4 w-4" />
+                )}
+              </Button>
+              
+              <div className="w-full">
                 <Slider
-                  defaultValue={[0.7]}
                   value={[isMuted ? 0 : volume]}
-                  max={1}
-                  step={0.01}
-                  onValueChange={(value) => setVolume(value[0])}
-                  className="w-16 h-1"
+                  min={0}
+                  max={100}
+                  step={1}
+                  onValueChange={handleVolumeChange}
+                  className="cursor-pointer"
                 />
               </div>
-              
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-8 w-8 hover:bg-gray-800"
-                  onClick={handlePrevSong}
-                >
-                  <SkipBack className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="default"
-                  size="icon"
-                  className="rounded-full h-10 w-10 bg-purple-800 hover:bg-purple-700"
-                  onClick={togglePlayPause}
-                >
-                  {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-8 w-8 hover:bg-gray-800"
-                  onClick={handleNextSong}
-                >
-                  <SkipForward className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="w-[72px]"></div> {/* Empty div to balance the layout */}
             </div>
           </div>
         </div>
         
+        {/* Category filter */}
+        <div className="flex justify-center space-x-2 mb-4">
+          {categoryButtons.map((btn) => (
+            <Button
+              key={btn.value}
+              variant="outline"
+              size="sm"
+              className={`text-xs ${
+                category === btn.value
+                  ? "bg-purple-900 border-purple-700 text-white"
+                  : "bg-transparent border-gray-700 text-gray-400 hover:bg-gray-800"
+              }`}
+              onClick={() => setCategory(btn.value as Track["category"] | "all")}
+            >
+              {btn.label}
+            </Button>
+          ))}
+        </div>
+        
         {/* Playlist */}
-        <div className="mt-4">
-          <h4 className="font-medium text-sm text-gray-400 mb-2">Recommended Tracks</h4>
-          <div className="space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
-            {songs.map((song, index) => (
-              <div
-                key={`${song.title}-${index}`}
-                className={`flex items-center p-2 rounded cursor-pointer hover:bg-gray-800/50 ${
-                  currentSongIndex === index ? 'bg-purple-900/30 border border-purple-800/50' : ''
-                }`}
-                onClick={() => {
-                  setCurrentSongIndex(index);
+        <div className="max-h-48 overflow-y-auto custom-scrollbar">
+          {filteredTracks.map((track, index) => (
+            <div
+              key={`${track.title}-${index}`}
+              className={`flex items-center justify-between p-2 rounded cursor-pointer ${
+                index === currentTrackIndex
+                  ? "bg-purple-900/30 border-l-4 border-purple-500"
+                  : "hover:bg-gray-800/50"
+              }`}
+              onClick={() => {
+                setCurrentTrackIndex(index);
+                if (!isPlaying) {
                   setIsPlaying(true);
-                }}
-              >
-                <div className="flex-shrink-0 w-8 h-8 mr-2">
-                  <img
-                    src={song.cover}
-                    alt={song.title}
-                    className="w-full h-full object-cover rounded"
-                    onError={(e) => {
-                      e.currentTarget.src = '/images/ronnie-coleman.jpg';
-                    }}
-                  />
+                }
+              }}
+            >
+              <div className="flex items-center">
+                <div className="mr-3">
+                  {index === currentTrackIndex && isPlaying ? (
+                    <div className="flex space-x-0.5">
+                      <div className="w-1 h-3 bg-purple-500 animate-pulse"></div>
+                      <div className="w-1 h-3 bg-purple-500 animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-1 h-3 bg-purple-500 animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                    </div>
+                  ) : (
+                    <Music className="h-4 w-4 text-gray-500" />
+                  )}
                 </div>
-                <div className="flex-grow min-w-0">
-                  <div className="font-medium text-sm truncate">{song.title}</div>
-                  <div className="text-xs text-gray-500 truncate">{song.artist}</div>
-                </div>
-                <div className="text-xs text-gray-500">
-                  {formatTime(song.duration)}
+                <div>
+                  <p className={`text-sm font-medium ${index === currentTrackIndex ? "text-white" : "text-gray-300"}`}>
+                    {track.title}
+                  </p>
+                  <p className="text-xs text-gray-500">{track.artist}</p>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center space-x-2">
+                <span
+                  className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    track.category === "workout" 
+                      ? "bg-red-900/50 text-red-400" 
+                      : track.category === "cardio" 
+                      ? "bg-orange-900/50 text-orange-400"
+                      : track.category === "cooldown"
+                      ? "bg-blue-900/50 text-blue-400"
+                      : "bg-purple-900/50 text-purple-400"
+                  }`}
+                >
+                  {track.category}
+                </span>
+                <span className="text-xs text-gray-500">{track.duration}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>

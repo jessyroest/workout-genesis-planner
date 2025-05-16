@@ -1,21 +1,28 @@
 
-import { useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { DailyHabit, getUserHabits, HABIT_TYPES, updateHabit, getHabitStreaks } from '@/utils/habitUtils';
-import { useToast } from '@/hooks/use-toast';
-import { ChevronLeft, ChevronRight, Flame } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { User } from "@supabase/supabase-js";
+import { useToast } from "@/hooks/use-toast";
+import { getUserHabits, updateHabit, getHabitStreaks, DailyHabit, HABIT_TYPES } from "@/utils/habitUtils";
+import { Button } from "@/components/ui/button";
+import { Flame, MinusCircle, PlusCircle } from "lucide-react";
 
 interface HabitTrackerProps {
   user: User | null;
 }
 
 const HabitTracker = ({ user }: HabitTrackerProps) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [habits, setHabits] = useState<DailyHabit[]>([]);
   const [streaks, setStreaks] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,16 +37,10 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
     
     setIsLoading(true);
     try {
-      const dateStr = selectedDate.toISOString().split('T')[0];
-      const data = await getUserHabits(user.id, dateStr);
-      setHabits(data);
+      const userHabits = await getUserHabits(user.id, selectedDate);
+      setHabits(userHabits);
     } catch (error) {
       console.error("Error loading habits:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load habit data",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -49,187 +50,159 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
     if (!user) return;
     
     try {
-      const data = await getHabitStreaks(user.id);
-      setStreaks(data);
+      const habitStreaks = await getHabitStreaks(user.id);
+      setStreaks(habitStreaks);
     } catch (error) {
       console.error("Error loading streaks:", error);
     }
   };
 
-  const handleUpdateHabit = async (habitIndex: number, newValue: number) => {
+  const handleUpdateHabit = async (habitIndex: number, increment: number) => {
     if (!user) return;
     
+    const habit = habits[habitIndex];
+    const newValue = Math.max(0, habit.actual_value + increment);
+    const wasCompleted = habit.completed;
+    
+    // Update locally first for immediate feedback
+    const updatedHabits = [...habits];
+    updatedHabits[habitIndex] = {
+      ...habit,
+      actual_value: newValue,
+      completed: newValue >= habit.target_value
+    };
+    setHabits(updatedHabits);
+    
+    // Then update in database
     try {
-      const updatedHabit = {
-        ...habits[habitIndex],
+      await updateHabit({
+        ...habit,
         user_id: user.id,
         actual_value: newValue,
-        completed: newValue >= habits[habitIndex].target_value
-      };
+        completed: newValue >= habit.target_value
+      });
       
-      const success = await updateHabit(updatedHabit);
-      
-      if (success) {
-        const updatedHabits = [...habits];
-        updatedHabits[habitIndex] = updatedHabit;
-        setHabits(updatedHabits);
+      // If habit was just completed, show a congratulatory toast
+      if (!wasCompleted && newValue >= habit.target_value) {
+        const habitDef = HABIT_TYPES[habit.habit_type];
+        const name = habitDef ? habitDef.name : habit.habit_type;
         
-        // Also update streaks if needed
-        if (updatedHabit.completed && !habits[habitIndex].completed) {
-          const habitType = updatedHabit.habit_type;
-          setStreaks((prev) => ({
-            ...prev,
-            [habitType]: (prev[habitType] || 0) + 1
-          }));
-        }
+        toast({
+          title: `${name} Completed! 🎉`,
+          description: "Great job keeping up with your habits!",
+          variant: "default"
+        });
+        
+        // Reload streaks to get updated counts
+        loadStreaks();
       }
     } catch (error) {
       console.error("Error updating habit:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update habit",
-        variant: "destructive",
-      });
+      
+      // Revert the local update if the server update failed
+      loadHabits();
     }
   };
 
-  const changeDay = (direction: 'prev' | 'next') => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(selectedDate.getDate() + (direction === 'prev' ? -1 : 1));
-    setSelectedDate(newDate);
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  };
-
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
+  const getProgressColor = (habitType: string) => {
+    return HABIT_TYPES[habitType]?.color || 'purple';
   };
 
   return (
     <Card className="bg-black/50 border-purple-800/30 backdrop-blur">
       <CardHeader>
         <CardTitle className="text-xl font-bold text-white flex items-center">
-          <span className="bg-purple-900 p-2 rounded-md mr-2">✅</span>
+          <span className="bg-purple-900 p-2 rounded-md mr-2">📝</span>
           Daily Habits
         </CardTitle>
         <CardDescription className="text-gray-400">
-          Track your wellness and fitness habits
+          Track your daily wellness and fitness habits
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => changeDay('prev')}
-            className="text-gray-400 hover:text-white hover:bg-gray-800"
-          >
-            <ChevronLeft />
-          </Button>
-          
-          <div className="font-bold text-lg">
-            {isToday(selectedDate) ? 'Today' : formatDate(selectedDate)}
-          </div>
-          
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => changeDay('next')}
-            disabled={isToday(selectedDate)}
-            className="text-gray-400 hover:text-white hover:bg-gray-800 disabled:opacity-30"
-          >
-            <ChevronRight />
-          </Button>
+        <div className="mb-4">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full bg-black border border-gray-700 rounded p-2 mb-2"
+          />
         </div>
 
         {isLoading ? (
-          <div className="py-10 flex justify-center">
+          <div className="h-48 flex items-center justify-center">
             <div className="animate-spin h-8 w-8 border-4 border-purple-500 rounded-full border-t-transparent"></div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
             {habits.map((habit, index) => {
-              const habitDef = HABIT_TYPES[habit.habit_type] || {
-                name: habit.habit_type,
-                icon: '🔷',
-                unit: 'times',
-                defaultTarget: 1,
-                color: 'gray'
-              };
+              const habitDef = HABIT_TYPES[habit.habit_type];
+              if (!habitDef) return null;
               
+              const progressPercent = Math.min(100, (habit.actual_value / habit.target_value) * 100);
+              const progressColorClass = `bg-${getProgressColor(habit.habit_type)}-600`;
               const streakCount = streaks[habit.habit_type] || 0;
-              const progress = (habit.actual_value / habit.target_value) * 100;
-              
-              const colorClass = habit.completed 
-                ? `bg-${habitDef.color}-600/50 border-${habitDef.color}-500`
-                : 'bg-gray-900 border-gray-800';
               
               return (
                 <div 
-                  key={`${habit.habit_type}-${index}`} 
-                  className={`border rounded-lg p-3 ${colorClass}`}
+                  key={habit.id || index} 
+                  className={`p-3 rounded-lg ${
+                    habit.completed 
+                      ? 'bg-gray-800/50 border border-green-800' 
+                      : 'bg-gray-900/30'
+                  }`}
                 >
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center">
-                      <div className="text-2xl mr-2">{habitDef.icon}</div>
-                      <div>
-                        <div className="font-medium">{habitDef.name}</div>
-                        <div className="text-xs text-gray-400 flex items-center">
-                          {streakCount > 0 && (
-                            <span className="flex items-center mr-1 text-orange-500">
-                              <Flame className="h-3 w-3 mr-0.5" /> {streakCount} days
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                      <span className="text-2xl mr-2">{habitDef.icon}</span>
+                      <span className="font-medium">{habitDef.name}</span>
                     </div>
                     
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 rounded-full border-gray-700 bg-black/50"
-                        onClick={() => handleUpdateHabit(index, Math.max(0, habit.actual_value - 1))}
-                      >
-                        -
-                      </Button>
-                      
-                      <div className="text-center min-w-[60px]">
-                        <span className="text-lg font-bold">{habit.actual_value}</span>
-                        <span className="text-gray-400 text-sm">/{habit.target_value}</span>
+                    {streakCount > 0 && (
+                      <div className="flex items-center text-xs bg-orange-900/50 px-2 py-1 rounded">
+                        <Flame className="h-3 w-3 text-orange-500 mr-1" />
+                        <span className="text-orange-400">{streakCount} day streak</span>
                       </div>
-                      
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 rounded-full border-gray-700 bg-black/50"
-                        onClick={() => handleUpdateHabit(index, habit.actual_value + 1)}
-                      >
-                        +
-                      </Button>
-                    </div>
+                    )}
                   </div>
                   
-                  <div className="mt-2 w-full bg-gray-900 rounded-full h-1.5">
-                    <div 
-                      className={`h-1.5 rounded-full bg-${habitDef.color}-500`} 
-                      style={{ width: `${Math.min(100, progress)}%` }}
-                    ></div>
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs text-gray-400 mb-1">
+                      <span>Progress</span>
+                      <span>{habit.actual_value} / {habit.target_value} {habitDef.unit}</span>
+                    </div>
+                    <Progress 
+                      value={progressPercent} 
+                      className="h-2 bg-gray-700"
+                      indicatorClassName={progressColorClass}
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between items-center mt-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                      onClick={() => handleUpdateHabit(index, -1)}
+                      disabled={habit.actual_value <= 0}
+                    >
+                      <MinusCircle className="h-4 w-4" />
+                    </Button>
+                    
+                    <span className="font-bold text-lg">{habit.actual_value}</span>
+                    
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                      onClick={() => handleUpdateHabit(index, 1)}
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               );
             })}
-            
-            {habits.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <p>No habit data available</p>
-              </div>
-            )}
           </div>
         )}
       </CardContent>

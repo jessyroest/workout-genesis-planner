@@ -30,6 +30,66 @@ export type Database = {
         }
         Relationships: []
       }
+      user_habits: {
+        Row: {
+          actual_value: number
+          completed: boolean
+          created_at: string | null
+          habit_type: string
+          id: string
+          notes: string | null
+          target_value: number
+          user_id: string
+        }
+        Insert: {
+          actual_value?: number
+          completed?: boolean
+          created_at?: string | null
+          habit_type: string
+          id?: string
+          notes?: string | null
+          target_value: number
+          user_id: string
+        }
+        Update: {
+          actual_value?: number
+          completed?: boolean
+          created_at?: string | null
+          habit_type?: string
+          id?: string
+          notes?: string | null
+          target_value?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_metrics: {
+        Row: {
+          created_at: string | null
+          id: string
+          metric_type: string
+          notes: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metric_type: string
+          notes?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metric_type?: string
+          notes?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
       workout_days: {
         Row: {
           created_at: string | null
@@ -94,7 +154,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_habit_streaks: {
+        Args: { user_id_param: string }
+        Returns: {
+          habit_type: string
+          streak_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
