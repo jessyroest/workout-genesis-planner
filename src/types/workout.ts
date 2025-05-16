@@ -125,3 +125,82 @@ export interface WorkoutPlan {
   priorityMuscles?: MuscleGroup[];
   limitations?: string[];
 }
+
+// New types for the enhanced dashboard
+export interface UserProfile {
+  id: string;
+  username?: string;
+  email?: string;
+  goal?: Goal;
+  experienceLevel?: ExperienceLevel;
+  weight?: number;
+  height?: number;
+  bodyFat?: number;
+  created_at?: string;
+}
+
+export interface UserMetric {
+  id?: string;
+  user_id: string;
+  type: string;
+  value: number;
+  date: string;
+  notes?: string;
+}
+
+export interface WorkoutSession {
+  id?: string;
+  user_id: string;
+  workout_id: string;
+  completed_at: string;
+  duration: number;
+  calories_burned?: number;
+  notes?: string;
+}
+
+export interface CommunityChallenge {
+  id: string;
+  title: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  goal_type: string;
+  goal_value: number;
+  participants: number;
+  completed_users: number;
+  user_progress?: number;
+}
+
+export interface LeaderboardEntry {
+  user_id: string;
+  username: string;
+  avatar?: string;
+  score: number;
+  rank: number;
+}
+
+export interface MealPlan {
+  id: string;
+  user_id: string;
+  day: string;
+  meals: Meal[];
+}
+
+export interface Meal {
+  id: string;
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  ingredients?: string[];
+}
+
+export interface ThemeSettings {
+  primaryColor: string;
+  accentColor: string;
+  fontFamily: string;
+  darkMode: boolean;
+  animations: boolean;
+}
