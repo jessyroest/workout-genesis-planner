@@ -70,7 +70,7 @@ export const getUserMetrics = async (
     return (data || []).map(item => ({
       id: item.id,
       user_id: item.user_id,
-      metric_type: item.metric_type as MetricType,
+      metric_type: item.metric_type as MetricType, // Cast to ensure type safety
       value: item.value,
       created_at: item.created_at,
       notes: item.notes
@@ -118,7 +118,7 @@ export const getMetricsTrend = async (
   }
 };
 
-// New utility functions for enhanced metrics
+// Utility functions for enhanced metrics
 export const getMetricColor = (metricType: MetricType): string => {
   const colors: Record<MetricType, string> = {
     weight: '#2563eb', // blue

@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getUserHabits, updateHabit, getHabitStreaks, DailyHabit, HABIT_TYPES } from "@/utils/habitUtils";
 import { Button } from "@/components/ui/button";
 import { Flame, MinusCircle, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HabitTrackerProps {
   user: User | null;
@@ -109,13 +110,13 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
   };
 
   return (
-    <Card className="bg-black/50 border-purple-800/30 backdrop-blur">
+    <Card className="bg-card border-border shadow-lg backdrop-blur rounded-xl">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-white flex items-center">
-          <span className="bg-purple-900 p-2 rounded-md mr-2">📝</span>
+        <CardTitle className="text-xl font-bold flex items-center">
+          <span className="bg-primary/10 text-primary p-2 rounded-md mr-2">📝</span>
           Daily Habits
         </CardTitle>
-        <CardDescription className="text-gray-400">
+        <CardDescription className="text-muted-foreground">
           Track your daily wellness and fitness habits
         </CardDescription>
       </CardHeader>
@@ -125,13 +126,13 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full bg-black border border-gray-700 rounded p-2 mb-2"
+            className="w-full bg-background border border-input rounded p-2 mb-2"
           />
         </div>
 
         {isLoading ? (
           <div className="h-48 flex items-center justify-center">
-            <div className="animate-spin h-8 w-8 border-4 border-purple-500 rounded-full border-t-transparent"></div>
+            <div className="animate-spin h-8 w-8 border-4 border-primary rounded-full border-t-transparent"></div>
           </div>
         ) : (
           <div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
@@ -148,8 +149,8 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
                   key={habit.id || index} 
                   className={`p-3 rounded-lg ${
                     habit.completed 
-                      ? 'bg-gray-800/50 border border-green-800' 
-                      : 'bg-gray-900/30'
+                      ? 'bg-green-500/10 border border-green-500/30' 
+                      : 'bg-muted/30'
                   }`}
                 >
                   <div className="flex justify-between items-center mb-2">
@@ -159,7 +160,7 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
                     </div>
                     
                     {streakCount > 0 && (
-                      <div className="flex items-center text-xs bg-orange-900/50 px-2 py-1 rounded">
+                      <div className="flex items-center text-xs bg-orange-500/10 px-2 py-1 rounded">
                         <Flame className="h-3 w-3 text-orange-500 mr-1" />
                         <span className="text-orange-400">{streakCount} day streak</span>
                       </div>
@@ -167,14 +168,16 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
                   </div>
                   
                   <div className="mb-2">
-                    <div className="flex justify-between text-xs text-gray-400 mb-1">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
                       <span>Progress</span>
                       <span>{habit.actual_value} / {habit.target_value} {habitDef.unit}</span>
                     </div>
                     <Progress 
                       value={progressPercent} 
-                      className="h-2 bg-gray-700"
-                      indicatorClassName={progressColorClass}
+                      className="h-2 bg-muted"
+                      // Use cn utility to combine classes instead of indicatorClassName
+                      // This avoids the TypeScript error
+                      indicatorClassName={cn(progressColorClass)}
                     />
                   </div>
                   
@@ -182,7 +185,7 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                      className="border-input text-muted-foreground hover:bg-muted hover:text-foreground"
                       onClick={() => handleUpdateHabit(index, -1)}
                       disabled={habit.actual_value <= 0}
                     >
@@ -194,7 +197,7 @@ const HabitTracker = ({ user }: HabitTrackerProps) => {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-gray-700 text-gray-400 hover:bg-gray-800 hover:text-white"
+                      className="border-input text-muted-foreground hover:bg-muted hover:text-foreground"
                       onClick={() => handleUpdateHabit(index, 1)}
                     >
                       <PlusCircle className="h-4 w-4" />
